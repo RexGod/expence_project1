@@ -36,8 +36,11 @@ class _ExpenceState extends State<Expence> {
   //when we pressed sumbite button or clicked on add transaction flat button the input transaction would add to our transaction list
   void _addNewTransaction(
       String newTitle, double newAmount, DateTime choosenDateTime) {
-    final newTransactions =
-        Transaction(title: newTitle, amount: newAmount, date: choosenDateTime);
+    final newTransactions = Transaction(
+        title: newTitle,
+        amount: newAmount,
+        date: choosenDateTime,
+        id: DateTime.now().toString());
     setState(() {
       _usertransaction.add(newTransactions);
     });
@@ -66,6 +69,14 @@ class _ExpenceState extends State<Expence> {
     }).toList();
   }
 
+  void deleteTransation(String id) {
+    setState(() {
+      _usertransaction.removeWhere((del) {
+        return del.id == id;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +94,7 @@ class _ExpenceState extends State<Expence> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Chart(_recentTransactions),
-            TransactionList(_usertransaction),
+            TransactionList(_usertransaction, deleteTransation),
           ],
         ),
       ),
