@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors, deprecated_member_use
-
 import 'package:expence_project1/widget/chart.dart';
 import 'package:flutter/material.dart';
 import './widget/new_transaction.dart';
@@ -7,7 +6,9 @@ import './model/transitoin.dart';
 import './widget/transaction_list.dart';
 import './widget/chart.dart';
 
-void main() => runApp(ExpenceApp());
+void main() {
+  runApp(ExpenceApp());
+}
 
 // ignore: use_key_in_widget_constructors
 class ExpenceApp extends StatelessWidget {
@@ -59,6 +60,8 @@ class _ExpenceState extends State<Expence> {
         });
   }
 
+  bool _showChart = false;
+
   List<Transaction> get _recentTransactions {
     return _usertransaction.where((tx) {
       return tx.date.isAfter(
@@ -79,26 +82,72 @@ class _ExpenceState extends State<Expence> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandScape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final appBar = AppBar(
+      backgroundColor: Theme.of(context).primaryColor,
+      title: Text('Expence App'),
+      actions: [
+        IconButton(
+            onPressed: () => _showTransactionInput(context),
+            icon: Icon(Icons.add))
+      ],
+    );
+    final mediaQuery = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        title: Text('Expence App'),
-        actions: [
-          IconButton(
-              onPressed: () => _showTransactionInput(context),
-              icon: Icon(Icons.add))
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Chart(_recentTransactions),
-            TransactionList(_usertransaction, deleteTransation),
+            if (isLandScape)
+              Row(
+                children: [
+                  Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    },
+                  ),
+                  Text('Show Chart')
+                ],
+              ),
+            if (!isLandScape)
+              Container(
+                  height: (mediaQuery -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.3,
+                  child: Chart(_recentTransactions)),
+            if (!isLandScape)
+              Container(
+                  height: (mediaQuery -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.7,
+                  child: TransactionList(_usertransaction, deleteTransation)),
+            if (isLandScape)
+              _showChart
+                  ? Container(
+                      height: (mediaQuery -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.8,
+                      child: Chart(_recentTransactions))
+                  : Container(
+                      height: (mediaQuery -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.7,
+                      child:
+                          TransactionList(_usertransaction, deleteTransation)),
           ],
         ),
       ),
       //adding floating button
+
       floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
           onPressed: () => _showTransactionInput(
