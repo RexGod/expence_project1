@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../model/transitoin.dart';
 import 'package:intl/intl.dart';
 
@@ -10,19 +11,27 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
       child: transactions.isEmpty
-          ? Column(
-              children: [
-                Container(
-                  height: 220,
-                ),
-                const Text(
-                  "No Transaction Added yet!",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )
-              ],
-            )
+          ? LayoutBuilder(builder: (contxt, Constraints) {
+              return Column(
+                children: [
+                  SizedBox(
+                    height: Constraints.maxHeight * 0.1,
+                  ),
+                  Container(
+                    height: Constraints.maxHeight * 0.6,
+                    child: Image(image: AssetImage('assets/images/pngegg.png')),
+                  ),
+                  SizedBox(
+                    height: Constraints.maxHeight * 0.1,
+                  ),
+                  Text(
+                    "No Transaction Added yet!",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              );
+            })
           //this is Transaction cards using map , list of Transaction
           : ListView.builder(
               itemCount: transactions.length,
